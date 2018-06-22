@@ -11,7 +11,7 @@ const port = process.env.PORT || 8080;
 
 const router = express.Router();
 
-router.get("/", () => "Hello World!");
+router.get("/", (req, res) => res.send("Hello World!"));
 
 router.get("/:key", async (req, res) => {
     const link = `https://www.sefaz.rs.gov.br/ASP/AAE_ROOT/NFE/SAT-WEB-NFE-NFC_2.asp?HML=false&chaveNFe=${req.params.key}`;
