@@ -1,3 +1,4 @@
+<<<<<<< 3a08347c72496145b44da04ddd49073de26a5450
 # Logs
 logs
 *.log
@@ -59,3 +60,11 @@ typings/
 
 # next.js build output
 .next
+=======
+# Node build artifacts
+node_modules
+npm-debug.log
+
+# Local development
+*.env
+>>>>>>> first api deploy
