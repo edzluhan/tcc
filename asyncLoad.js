@@ -1,13 +1,14 @@
 const MongoClient = require('mongodb').MongoClient;
 const nfe = require("nfe-biblioteca");
 
-const connectionString = 'mongodb://heroku_tgr7s4z2:m1p81fcir9pk4a6g5vl4ecvgvu@ds147011.mlab.com:47011/heroku_tgr7s4z2';
-
+const connectionString = process.env.MONGODB_URI;
+const dbName = process.env.DB_NAME
+console.log(connectionString, dbName);return;
 var invoices = [];
 
 (async () => {
     const client = await MongoClient.connect(connectionString, { useNewUrlParser: true });
-    const db = client.db('heroku_tgr7s4z2');
+    const db = client.db(dbName);
 
     try {
        const res = await db.collection('Nfe').find({}).toArray(async (err, res)=> {
