@@ -12,9 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bing-geocoder": "^0.3.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
+    "geo-coder": "^1.0.2",
     "mongodb": "^3.1.1",
     "nfe-biblioteca": "^1.0.4"
   }
