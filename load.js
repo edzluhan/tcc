@@ -1,23 +1,5 @@
-const nfe = require("nfe-biblioteca");
-const MongoClient = require('mongodb').MongoClient;
+const nfe = require('./insertSingleNfe');
 
-// Connection URL
-const url = 'mongodb://heroku_tgr7s4z2:m1p81fcir9pk4a6g5vl4ecvgvu@ds147011.mlab.com:47011/heroku_tgr7s4z2';
-const assert = require('assert');
-const dbName = 'heroku_tgr7s4z2';
-
-let db;
-
-MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
- 
-  db = client.db(dbName);
-
-});
-
-setTimeout(function() {console.log(db)}, 5000);
-
-// nfe.consultar(link)
-// 	.then(res => console.log(res))
-// 	.catch(e => console.log(e));
+nfe(
+  'https://www.sefaz.rs.gov.br/NFCE/NFCE-COM.aspx?chNFe=43180593015006000890651050002185881517712065&nVersao=100&tpAmb=1&dhEmi=323031382d30352d30355431323a31383a33332d30333a3030&vNF=71.89&vICMS=1.60&digVal=7a646e52687a646a566a34786d7074794856775378454e67324e513d&cIdToken=000001&cHashQRCode=E6ED6854ED5ED18E06EFD60337127A4C9ECFC608'
+).catch(err => console.log(err));
