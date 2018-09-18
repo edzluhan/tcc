@@ -1,6 +1,7 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const nfe = require("nfe-biblioteca");
+const express = require('express');
+const bodyParser = require('body-parser');
+const asyncHandler = require('express-async-handler')
+const insertSingleNfe = require('./lib/insertSingleNfe')
 
 const app = express();
 
@@ -11,13 +12,16 @@ const port = process.env.PORT || 8080;
 
 const router = express.Router();
 
-router.get("/", (req, res) => res.send("Hello World!"));
-
-router.get("/:key", async (req, res) => {
-    const link = `https://www.sefaz.rs.gov.br/ASP/AAE_ROOT/NFE/SAT-WEB-NFE-NFC_2.asp?HML=false&chaveNFe=${req.params.key}`;
-    const response = await nfe.consultar(link);
-    res.send(response);
-});
+router.post('/insert', asyncHandler(async (req, res) => {
+	const result = await insertSingleNfe(req.body.url);
+	if (result) {
+		res.statusCode = 200;
+		res.send({"success": result});
+	} else {
+		res.statusCode = 400;
+		res.send('Bad Request');
+	}
+}));
 
 app.use(router);
 
