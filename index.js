@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 const insertSingleNfe = require('./lib/insertSingleNfe');
+const findProductsByDescription = require('./lib/findProduct').findProductsByDescription;
 
 const app = express();
 
@@ -22,6 +23,16 @@ router.post('/insert', asyncHandler(async (req, res) => {
 	} else {
 		res.statusCode = 400;
 		res.send('Bad Request');
+	}
+}));
+
+router.get('/find', asyncHandler(async (req, res) => {
+	const result = await findProductsByDescription(req.query.description);
+	if (result) {
+		res.statusCode = 200;
+		res.send({ "success": true, result: result });
+	} else {
+		console.log('no result');
 	}
 }));
 
