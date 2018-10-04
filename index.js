@@ -4,6 +4,7 @@ const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 const insertSingleNfe = require('./lib/insertSingleNfe');
 const findProductsByDescription = require('./lib/findProduct').findProductsByDescription;
+const findProductById = require('./lib/findProduct').findProductById;
 
 const app = express();
 
@@ -28,6 +29,16 @@ router.post('/insert', asyncHandler(async (req, res) => {
 
 router.get('/find', asyncHandler(async (req, res) => {
 	const result = await findProductsByDescription(req.query.description);
+	if (result) {
+		res.statusCode = 200;
+		res.send({ "success": true, result: result });
+	} else {
+		console.log('no result');
+	}
+}));
+
+router.get('/findById', asyncHandler(async (req, res) => {
+	const result = await findProductById(req.query.id);
 	if (result) {
 		res.statusCode = 200;
 		res.send({ "success": true, result: result });
