@@ -27,7 +27,7 @@ router.post('/insert', asyncHandler(async (req, res) => {
 	}
 }));
 
-router.get('/find', asyncHandler(async (req, res) => {
+router.get('/findProductsByDescription', asyncHandler(async (req, res) => {
 	const result = await findProductsByDescription(req.query.description);
 	if (result) {
 		res.statusCode = 200;
@@ -37,7 +37,7 @@ router.get('/find', asyncHandler(async (req, res) => {
 	}
 }));
 
-router.get('/findById', asyncHandler(async (req, res) => {
+router.get('/findProductById', asyncHandler(async (req, res) => {
 	const result = await findProductById(req.query.id);
 	if (result) {
 		res.statusCode = 200;
