@@ -65,13 +65,28 @@ router.post('/login', asyncHandler(async (req, res) => {
 		if (await bcrypt.compare(password, user.password)) {
 			const userData = { name: user.name, email: user.email };
 			const token = jwt.sign(userData, 'secret');
-			res.statusCode = 200;
-			res.send({ success: true, user: userData, token: token });
-			return;
+
+			return res.status(200).send({ success: true, user: userData, token: token });
 		}
-		res.statusCode = 401;
-		res.send({ success: false, message: 'access denied' })
 	}
+	return res.status(401).send({ success: false, message: 'access denied' });
+	
+}));
+
+router.get('/me', asyncHandler(async (req, res) => {
+	console.log(req.headers);
+	const token = req.headers['x-access-token'];
+
+	if (!token) {
+		return res.status(401).send({ success: false, message: 'No token provided.' });
+	}
+
+	jwt.verify(token, 'secret', (err, decoded) => {
+		if (err) {
+			return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+		}
+		return res.status(200).send(decoded);
+	});
 }));
 
 app.use(router);
