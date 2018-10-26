@@ -9,6 +9,7 @@ const insertSingleNfe = require('./lib/insertSingleNfe');
 const findProductsByDescription = require('./lib/findProduct').findProductsByDescription;
 const findProductById = require('./lib/findProduct').findProductById;
 const authUser = require('./lib/user').authUser;
+const registerUser = require('./lib/user').registerUser;
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -52,7 +53,11 @@ router.get('/findProductById', asyncHandler(async (req, res) => {
 
 router.post('/register', asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;
-
+	const register = await registerUser({ name, email, password });
+	// console.log('ok', register.result.result.ok, typeof register.result.result.ok)
+	if (register.result.result.ok === 1) {
+		return res.status(200).send({ success: true });
+	}	
 }));
 
 router.post('/login', asyncHandler(async (req, res) => {
@@ -70,7 +75,7 @@ router.post('/login', asyncHandler(async (req, res) => {
 		}
 	}
 	return res.status(401).send({ success: false, message: 'access denied' });
-	
+
 }));
 
 router.get('/me', asyncHandler(async (req, res) => {
