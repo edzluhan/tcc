@@ -138,10 +138,44 @@ router.get(
           .send({ success: false, message: 'Failed to authenticate token.' });
       }
       console.log('decoded jwt', decoded);
-	  const { email } = decoded;
-	  const lists = await getLists(email);
-	  console.log('lists', lists);
+      const { email } = decoded;
+      const lists = await getLists(email);
+      console.log('lists', lists);
       return res.status(200).send({ success: true, lists: lists });
+    });
+  })
+);
+
+router.post(
+  '/lists',
+  asyncHandler(async (req, res) => {
+    console.log(req.headers);
+    const token = req.headers['x-access-token'];
+
+    if (!token) {
+      return res
+        .status(401)
+        .send({ success: false, message: 'No token provided.' });
+    }
+
+    const { list } = req.body;
+
+    jwt.verify(token, 'secret', async (err, decoded) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ success: false, message: 'Failed to authenticate token.' });
+      }
+      if (!list) {
+        return res
+          .status(400)
+          .send({ success: false, message: 'Malformed request.' });
+      }
+      console.log('decoded jwt', decoded);
+      const { email } = decoded;
+      const result = await updateList(email, list);
+      console.log('result', result);
+      return res.status(200).send({ success: true, lists: result });
     });
   })
 );
