@@ -12,6 +12,7 @@ const findProductById = require('./lib/findProduct').findProductById;
 const authUser = require('./lib/user').authUser;
 const registerUser = require('./lib/user').registerUser;
 const getLists = require('./lib/user').getLists;
+const updateList = require('./lib/user').updateList;
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -146,8 +147,8 @@ router.get(
   })
 );
 
-router.post(
-  '/lists',
+router.put(
+  '/list',
   asyncHandler(async (req, res) => {
     console.log(req.headers);
     const token = req.headers['x-access-token'];
