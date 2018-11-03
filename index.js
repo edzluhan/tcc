@@ -175,7 +175,7 @@ router.put(
       console.log('decoded jwt', decoded);
       const { email } = decoded;
       const result = await updateList(email, list);
-      console.log('result', result);
+      // console.log('result', result);
       return res.status(200).send({ success: true, lists: result });
     });
   })
