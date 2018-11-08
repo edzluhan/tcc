@@ -72,7 +72,9 @@ router.post(
 		const register = await registerUser({ name, email, password });
 		// console.log('ok', register.result.result.ok, typeof register.result.result.ok)
 		if (register.result.result.ok === 1) {
-			return res.status(200).send({ success: true });
+			const userData = { name: user.name, email: user.email };
+			const token = jwt.sign(userData, 'secret');
+			return res.status(200).send({ success: true, token: token });
 		}
 	})
 );
