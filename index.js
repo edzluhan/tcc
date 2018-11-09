@@ -12,7 +12,9 @@ const findProductById = require('./lib/findProduct').findProductById;
 const authUser = require('./lib/user').authUser;
 const registerUser = require('./lib/user').registerUser;
 const getLists = require('./lib/user').getLists;
+const getNFEs = require('./lib/user').getNFEs;
 const updateList = require('./lib/user').updateList;
+const createListFromNFE = require('./lib/user').createListFromNFE;
 const getEstablishments = require('./lib/establishment').getEstablishments;
 const findEstablishments = require('./lib/establishment').findEstablishments;
 const app = express();
@@ -191,6 +193,67 @@ router.get(
 		const establishments = await getEstablishments();
 		console.log('establishments', establishments);
 		return res.status(200).send({ success: true, establishments: establishments });
+	})
+);
+
+router.get(
+	'/nfes',
+	asyncHandler(async (req, res) => {
+		console.log(req.headers);
+		const token = req.headers['x-access-token'];
+
+		if (!token) {
+			return res
+				.status(401)
+				.send({ success: false, message: 'No token provided.' });
+		}
+
+		jwt.verify(token, 'secret', async (err, decoded) => {
+			if (err) {
+				return res
+					.status(500)
+					.send({ success: false, message: 'Failed to authenticate token.' });
+			}
+			console.log('decoded jwt', decoded);
+			const { email } = decoded;
+			const nfes = await getNFEs(email);
+			console.log('nfes', nfes);
+			return res.status(200).send({ success: true, nfes: nfes });
+		});
+	})
+);
+
+router.post(
+	'/createListFromNFE',
+	asyncHandler(async (req, res) => {
+		const token = req.headers['x-access-token'];
+
+		if (!token) {
+			return res
+				.status(401)
+				.send({ success: false, message: 'No token provided.' });
+		}
+
+		const { name, products } = req.body;
+
+		jwt.verify(token, 'secret', async (err, decoded) => {
+			if (err) {
+				return res
+					.status(500)
+					.send({ success: false, message: 'Failed to authenticate token.' });
+			}
+			if (!name || !products) {
+				return res
+					.status(400)
+					.send({ success: false, message: 'Malformed request.' });
+			}
+			console.log('decoded jwt', decoded);
+			const newList = await createListFromNFE(name, products);
+			const { email } = decoded;
+			const result = await updateList(email, newList);
+			// console.log('result', result);
+			return res.status(200).send({ success: true, lists: result });
+		});
 	})
 );
 
