@@ -11,6 +11,7 @@ const findProductsByDescription = require('./lib/findProduct')
 const findProductById = require('./lib/findProduct').findProductById;
 const authUser = require('./lib/user').authUser;
 const registerUser = require('./lib/user').registerUser;
+const updateUser = require('./lib/user').updateUser;
 const getLists = require('./lib/user').getLists;
 const getNFEs = require('./lib/user').getNFEs;
 const updateList = require('./lib/user').updateList;
@@ -97,7 +98,7 @@ router.post(
 		const { email, password } = req.body;
 		console.log('body', req.body);
 
-		const user = await authUser({ email, password });
+		const user = await authUser({ email });
 
 		if (user) {
 			if (await bcrypt.compare(password, user.password)) {
@@ -110,6 +111,37 @@ router.post(
 			}
 		}
 		return res.status(401).send({ success: false, message: 'access denied' });
+	})
+);
+
+router.post(
+	'/socialLogin',
+	asyncHandler(async (req, res) => {
+		const { id, email, name, provider } = req.body;
+		console.log('body', req.body);
+
+		const user = await authUser({ email });
+
+		if (user) {
+			if (user[provider] && user[provider].id !== id) {
+				return res.status(401).send({ success: false, message: 'access denied' });
+			}
+			if (!user[provider]) {
+				// add provider and id to user
+				// user[provider] = id;
+				await updateUser(email, { [provider]: { id: id } });
+			}
+
+		} else {
+			// register user with name, email, social provider and id
+			registerUser({ name, email, provider, id })
+		}
+		const userData = { name: name, email: email };
+		const token = jwt.sign(userData, 'secret');
+
+		return res
+			.status(200)
+			.send({ success: true, user: userData, token: token });
 	})
 );
 
