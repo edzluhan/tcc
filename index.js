@@ -38,7 +38,7 @@ router.post(
 			return res.send({ success: result });
 		}
 
-		jwt.verify(token, 'secret', (err, decoded) => {
+		jwt.verify(token, 'secret', async (err, decoded) => {
 			if (err) {
 				return res
 					.status(500)
