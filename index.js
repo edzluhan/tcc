@@ -30,14 +30,24 @@ const router = express.Router();
 router.post(
 	'/insert',
 	asyncHandler(async (req, res) => {
-		const result = await insertSingleNfe(req.body.url);
-		if (result) {
+		const token = req.headers['x-access-token'];
+
+		if (!token) {
+			const result = await insertSingleNfe(req.body.url);
 			res.statusCode = 200;
-			res.send({ success: result });
-		} else {
-			res.statusCode = 400;
-			res.send('Bad Request');
+			return res.send({ success: result });
 		}
+
+		jwt.verify(token, 'secret', (err, decoded) => {
+			if (err) {
+				return res
+					.status(500)
+					.send({ success: false, message: 'Failed to authenticate token.' });
+			}
+			const { email } = decoded;
+			const result = await insertSingleNfe(req.body.url, email);
+			return res.status(200).send({ success: result });
+		});
 	})
 );
 
